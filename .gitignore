@@ -1,26 +1,27 @@
-# gradle
+# Gradle
 .gradle/
 build/
+bin/
 
-# Visual studio code
--vscode/
+# Visual Studio Code
+.vscode/
 
 # Java
 *.class
 
-#Logs
+# Logs
 *.log
 
-#variables de entorno
+# Variables de entorno
 .env
-.env. *
+.env.*
 !.env.example
 
-#configuracion local
+# Configuración local
 application-local.yml
 application-local.yaml
 application-local.properties
 
-#sistema operativo
+# Sistema operativo
 .DS_Store
 Thumbs.db
