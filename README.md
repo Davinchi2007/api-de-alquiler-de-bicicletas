@@ -33,6 +33,17 @@ DB_USERNAME=postgres
 DB_PASSWORD=tu-clave
 ```
 
+La seguridad HTTP permite los requests CORS únicamente desde los orígenes
+definidos en `CORS_ALLOWED_ORIGINS`. Por defecto se permite el frontend local
+`http://localhost:3000`. Para varios orígenes, separarlos por comas:
+
+```text
+CORS_ALLOWED_ORIGINS=http://localhost:3000,https://frontend.example.com
+```
+
+La API usa headers defensivos, no mantiene sesiones y expone de Actuator solo
+`/actuator/health` y `/actuator/info`.
+
 Flyway crea y valida las tablas al iniciar la aplicacion.
 
 ## Ejecutar

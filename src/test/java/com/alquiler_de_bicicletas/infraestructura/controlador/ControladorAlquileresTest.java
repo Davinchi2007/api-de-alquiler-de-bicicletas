@@ -29,11 +29,13 @@ import com.alquiler_de_bicicletas.dominio.excepcion.FechaDevolucionInvalidaExcep
 import com.alquiler_de_bicicletas.dominio.excepcion.TransicionEstadoBicicletaInvalidaException;
 import com.alquiler_de_bicicletas.infraestructura.controlador.mapeador.MapeadorHistorialAlquiler;
 import com.alquiler_de_bicicletas.infraestructura.controlador.mapeador.MapeadorAlquilerRespuesta;
+import com.alquiler_de_bicicletas.infraestructura.configuracion.SeguridadConfiguracion;
 import com.alquiler_de_bicicletas.infraestructura.excepcion.ManejadorGlobalExcepciones;
 import com.alquiler_de_bicicletas.aplicacion.excepcion.BicicletaNoEncontradaException;
 
 @WebMvcTest(ControladorAlquileres.class)
-@Import({MapeadorHistorialAlquiler.class, MapeadorAlquilerRespuesta.class, ManejadorGlobalExcepciones.class})
+@Import({MapeadorHistorialAlquiler.class, MapeadorAlquilerRespuesta.class,
+        ManejadorGlobalExcepciones.class, SeguridadConfiguracion.class})
 class ControladorAlquileresTest {
 
     @Autowired

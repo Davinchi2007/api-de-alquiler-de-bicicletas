@@ -24,10 +24,11 @@ import com.alquiler_de_bicicletas.dominio.modelo.Bicicleta;
 import com.alquiler_de_bicicletas.dominio.modelo.EstadoBicicleta;
 import com.alquiler_de_bicicletas.dominio.modelo.TipoBicicleta;
 import com.alquiler_de_bicicletas.infraestructura.controlador.mapeador.MapeadorBicicletaRespuesta;
+import com.alquiler_de_bicicletas.infraestructura.configuracion.SeguridadConfiguracion;
 import com.alquiler_de_bicicletas.infraestructura.excepcion.ManejadorGlobalExcepciones;
 
 @WebMvcTest(ControladorBicicletas.class)
-@Import({MapeadorBicicletaRespuesta.class, ManejadorGlobalExcepciones.class})
+@Import({MapeadorBicicletaRespuesta.class, ManejadorGlobalExcepciones.class, SeguridadConfiguracion.class})
 class ControladorBicicletasTest {
 
     @Autowired
