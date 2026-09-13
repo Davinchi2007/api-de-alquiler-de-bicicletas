@@ -3,11 +3,12 @@ package com.alquiler_de_bicicletas.aplicacion.puerto.entrada;
 import java.util.List;
 
 import com.alquiler_de_bicicletas.dominio.modelo.Bicicleta;
+import com.alquiler_de_bicicletas.dominio.modelo.EstadoBicicleta;
 import com.alquiler_de_bicicletas.dominio.modelo.TipoBicicleta;
 
 public interface PuertoEntradaGestionBicicletas {
 
-    Bicicleta registrar(String codigo, TipoBicicleta tipo);
+    Bicicleta registrar(String codigo, TipoBicicleta tipo, EstadoBicicleta estado);
 
     Bicicleta buscarPorCodigo(String codigo);
 

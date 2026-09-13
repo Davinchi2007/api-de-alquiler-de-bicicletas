@@ -8,6 +8,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.Version;
 
 import com.alquiler_de_bicicletas.dominio.modelo.EstadoBicicleta;
 import com.alquiler_de_bicicletas.dominio.modelo.TipoBicicleta;
@@ -19,6 +20,10 @@ public class EntidadJpaBicicleta {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Version
+    @Column(nullable = false)
+    private Long version;
 
     @Column(nullable = false, unique = true, length = 50)
     private String codigo;
@@ -40,8 +45,17 @@ public class EntidadJpaBicicleta {
         this.estado = estado;
     }
 
+    public void actualizarDatos(TipoBicicleta tipo, EstadoBicicleta estado) {
+        this.tipo = tipo;
+        this.estado = estado;
+    }
+
     public Long getId() {
         return id;
+    }
+
+    public Long getVersion() {
+        return version;
     }
 
     public String getCodigo() {

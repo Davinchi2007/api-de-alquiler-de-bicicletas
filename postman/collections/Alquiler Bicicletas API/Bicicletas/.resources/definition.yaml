@@ -1,0 +1,3 @@
+$kind: collection
+description: Pruebas de registro, consulta y disponibilidad de bicicletas.
+order: 1000

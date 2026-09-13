@@ -1,0 +1,19 @@
+$kind: http-request
+description: Segundo intento después de finalizar BIC-002. El servicio busca solo alquileres activos, por lo que el comportamiento real esperado es 404.
+url: "{{baseUrl}}/api/alquileres/{{codigoBicicletaMontana}}/finalizar"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "fechaHoraDevolucion": "2026-09-12T12:00:00"
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('Status 404', () => pm.response.to.have.status(404));
+      pm.test('Respuesta JSON', () => pm.response.to.be.json);
+    language: text/javascript
+order: 16000

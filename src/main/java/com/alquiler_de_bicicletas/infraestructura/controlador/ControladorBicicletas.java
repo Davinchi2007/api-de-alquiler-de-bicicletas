@@ -38,7 +38,8 @@ public class ControladorBicicletas {
     @PostMapping
     public ResponseEntity<RespuestaBicicletaDTO> registrar(
             @Valid @RequestBody SolicitudCrearBicicletaDTO solicitud) {
-        Bicicleta bicicleta = puertoEntradaBicicletas.registrar(solicitud.codigo(), solicitud.tipo());
+        Bicicleta bicicleta = puertoEntradaBicicletas.registrar(
+            solicitud.codigo(), solicitud.tipo(), solicitud.estado());
         RespuestaBicicletaDTO respuesta = mapeadorBicicletaRespuesta.convertirARespuesta(bicicleta);
 
         return ResponseEntity.created(URI.create("/api/bicicletas/" + respuesta.codigo())).body(respuesta);
@@ -53,12 +54,16 @@ public class ControladorBicicletas {
     @GetMapping("/disponibles")
     public ResponseEntity<List<RespuestaBicicletaDTO>> obtenerDisponibles(
             @RequestParam(required = false) TipoBicicleta tipo) {
-        List<Bicicleta> bicicletas = tipo == null
-            ? puertoEntradaBicicletas.obtenerDisponibles()
-            : puertoEntradaBicicletas.obtenerDisponiblesPorTipo(tipo);
+        List<Bicicleta> bicicletas = obtenerBicicletasDisponibles(tipo);
 
         return ResponseEntity.ok(bicicletas.stream()
-            .map(mapeadorBicicletaRespuesta::convertirARespuesta)
-            .toList());
+                .map(mapeadorBicicletaRespuesta::convertirARespuesta)
+                .toList());
+    }
+
+    private List<Bicicleta> obtenerBicicletasDisponibles(TipoBicicleta tipo) {
+        return tipo == null
+                ? puertoEntradaBicicletas.obtenerDisponibles()
+                : puertoEntradaBicicletas.obtenerDisponiblesPorTipo(tipo);
     }
 }

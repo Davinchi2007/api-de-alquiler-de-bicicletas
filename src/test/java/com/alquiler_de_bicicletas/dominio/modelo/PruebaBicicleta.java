@@ -10,7 +10,8 @@ class PruebaBicicleta {
 
     @Test
     void deberiaCrearBicicletaCuandoLosDatosSonValidos() {
-        Bicicleta bicicleta = new Bicicleta("BIC-001", TipoBicicleta.URBANA, EstadoBicicleta.DISPONIBLE);
+        Bicicleta bicicleta = Bicicleta.crear(
+            "BIC-001", TipoBicicleta.URBANA, EstadoBicicleta.DISPONIBLE);
 
         assertEquals("BIC-001", bicicleta.getCodigo());
         assertEquals(TipoBicicleta.URBANA, bicicleta.getTipo());
@@ -19,26 +20,34 @@ class PruebaBicicleta {
 
     @Test
     void deberiaRechazarBicicletaCuandoElCodigoEsNulo() {
-        assertThrows(IllegalArgumentException.class,
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
                 () -> new Bicicleta(null, TipoBicicleta.URBANA, EstadoBicicleta.DISPONIBLE));
+
+        assertEquals("El código de bicicleta es obligatorio y no puede estar vacío", exception.getMessage());
     }
 
     @Test
     void deberiaRechazarBicicletaCuandoElCodigoEstaVacio() {
-        assertThrows(IllegalArgumentException.class,
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
                 () -> new Bicicleta("   ", TipoBicicleta.URBANA, EstadoBicicleta.DISPONIBLE));
+
+        assertEquals("El código de bicicleta es obligatorio y no puede estar vacío", exception.getMessage());
     }
 
     @Test
     void deberiaRechazarBicicletaCuandoElTipoEsNulo() {
-        assertThrows(NullPointerException.class,
+        NullPointerException exception = assertThrows(NullPointerException.class,
                 () -> new Bicicleta("BIC-001", null, EstadoBicicleta.DISPONIBLE));
+
+        assertEquals("El tipo de bicicleta es obligatorio", exception.getMessage());
     }
 
     @Test
     void deberiaRechazarBicicletaCuandoElEstadoEsNulo() {
-        assertThrows(NullPointerException.class,
+        NullPointerException exception = assertThrows(NullPointerException.class,
                 () -> new Bicicleta("BIC-001", TipoBicicleta.URBANA, null));
+
+        assertEquals("El estado de la bicicleta es obligatorio", exception.getMessage());
     }
 
     @Test

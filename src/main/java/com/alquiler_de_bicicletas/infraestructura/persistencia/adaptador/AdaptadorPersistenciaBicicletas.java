@@ -23,7 +23,9 @@ public class AdaptadorPersistenciaBicicletas implements PuertoSalidaRepositorioB
 
     @Override
     public Bicicleta guardar(Bicicleta bicicleta) {
-        EntidadJpaBicicleta entidad = convertirAEntidad(bicicleta);
+        EntidadJpaBicicleta entidad = repositorioJpaBicicletas.buscarPorCodigo(bicicleta.getCodigo())
+                .map(entidadExistente -> actualizarEntidad(entidadExistente, bicicleta))
+                .orElseGet(() -> convertirAEntidad(bicicleta));
         return convertirADominio(repositorioJpaBicicletas.save(entidad));
     }
 
@@ -36,7 +38,7 @@ public class AdaptadorPersistenciaBicicletas implements PuertoSalidaRepositorioB
     public List<Bicicleta> obtenerDisponibles() {
         return repositorioJpaBicicletas.buscarPorEstado(EstadoBicicleta.DISPONIBLE)
                 .stream()
-            .map(this::convertirADominio)
+                .map(this::convertirADominio)
                 .toList();
     }
 
@@ -44,7 +46,7 @@ public class AdaptadorPersistenciaBicicletas implements PuertoSalidaRepositorioB
     public List<Bicicleta> obtenerDisponiblesPorTipo(TipoBicicleta tipo) {
         return repositorioJpaBicicletas.buscarPorEstadoYTipo(EstadoBicicleta.DISPONIBLE, tipo)
                 .stream()
-            .map(this::convertirADominio)
+                .map(this::convertirADominio)
                 .toList();
     }
 
@@ -55,6 +57,11 @@ public class AdaptadorPersistenciaBicicletas implements PuertoSalidaRepositorioB
 
     private EntidadJpaBicicleta convertirAEntidad(Bicicleta bicicleta) {
         return new EntidadJpaBicicleta(bicicleta.getCodigo(), bicicleta.getTipo(), bicicleta.getEstado());
+    }
+
+    private EntidadJpaBicicleta actualizarEntidad(EntidadJpaBicicleta entidad, Bicicleta bicicleta) {
+        entidad.actualizarDatos(bicicleta.getTipo(), bicicleta.getEstado());
+        return entidad;
     }
 
     private Bicicleta convertirADominio(EntidadJpaBicicleta entidad) {

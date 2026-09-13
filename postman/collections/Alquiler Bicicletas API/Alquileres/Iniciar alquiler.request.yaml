@@ -1,0 +1,24 @@
+$kind: http-request
+description: Inicia un alquiler y cambia la bicicleta a ALQUILADA. Espera 201 Created.
+url: "{{baseUrl}}/api/alquileres"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "codigoBicicleta": "{{codigoBicicletaMontana}}",
+      "nombreCliente": "{{nombreCliente}}",
+      "fechaHoraInicio": "{{fechaHoraInicio}}",
+      "duracionEstimadaHoras": {{duracionEstimadaHoras}}
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('Status 201', () => pm.response.to.have.status(201));
+      pm.test('Respuesta JSON', () => pm.response.to.be.json);
+      pm.test('Estado activo', () => pm.expect(pm.response.json().estado).to.eql('ACTIVO'));
+      pm.test('Codigo correcto', () => pm.expect(pm.response.json().codigoBicicleta).to.eql(pm.variables.get('codigoBicicletaMontana'))); 
+    language: text/javascript
+order: 1000

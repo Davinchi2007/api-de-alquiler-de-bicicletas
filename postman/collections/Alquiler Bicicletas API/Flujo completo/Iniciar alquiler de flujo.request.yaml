@@ -1,0 +1,20 @@
+$kind: http-request
+description: "Paso 3: inicia el alquiler. Espera 201 Created."
+url: "{{baseUrl}}/api/alquileres"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "codigoBicicleta": "BIC-FLUJO-001",
+      "nombreCliente": "Cliente Flujo",
+      "fechaHoraInicio": "2026-09-12T09:00:00",
+      "duracionEstimadaHoras": 2
+    }
+scripts:
+  - type: afterResponse
+    code: pm.test('Status 201', () => pm.response.to.have.status(201));
+    language: text/javascript
+order: 3000

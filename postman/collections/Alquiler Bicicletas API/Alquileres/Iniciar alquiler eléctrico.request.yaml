@@ -1,0 +1,24 @@
+$kind: http-request
+description: Inicia el alquiler eléctrico necesario para la prueba de retraso. Espera 201 Created.
+url: "{{baseUrl}}/api/alquileres"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "codigoBicicleta": "{{codigoBicicletaElectrica}}",
+      "nombreCliente": "{{nombreCliente}}",
+      "fechaHoraInicio": "2026-09-12T09:00:00",
+      "duracionEstimadaHoras": 2
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('Status 201', () => pm.response.to.have.status(201));
+      pm.test('Respuesta JSON', () => pm.response.to.be.json);
+      pm.test('Estado activo', () => pm.expect(pm.response.json().estado).to.eql('ACTIVO'));
+      pm.test('Codigo eléctrico', () => pm.expect(pm.response.json().codigoBicicleta).to.eql('BIC-003')); 
+    language: text/javascript
+order: 4000

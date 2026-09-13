@@ -22,12 +22,12 @@ public class ServicioGestionBicicletas implements PuertoEntradaGestionBicicletas
     }
 
     @Override
-    public Bicicleta registrar(String codigo, TipoBicicleta tipo) {
+    public Bicicleta registrar(String codigo, TipoBicicleta tipo, EstadoBicicleta estado) {
         if (repositorioBicicletas.existePorCodigo(codigo)) {
             throw new BicicletaYaExisteException(codigo);
         }
 
-        Bicicleta bicicleta = new Bicicleta(codigo, tipo, EstadoBicicleta.DISPONIBLE);
+        Bicicleta bicicleta = Bicicleta.crear(codigo, tipo, estado);
         return repositorioBicicletas.guardar(bicicleta);
     }
 

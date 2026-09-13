@@ -1,0 +1,228 @@
+{
+  "info": {
+    "_postman_id": "8c76caa0-8f2e-4b3d-9a5d-gestion-alquileres",
+    "name": "Alquiler Bicicletas API",
+    "description": "Coleccion manual para validar RF-01 a RF-05 de la API de alquiler de bicicletas. Requiere la API ejecutandose y PostgreSQL configurado mediante variables de entorno.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8080" },
+    { "key": "codigoBicicletaUrbana", "value": "BIC-001" },
+    { "key": "codigoBicicletaMontana", "value": "BIC-002" },
+    { "key": "codigoBicicletaElectrica", "value": "BIC-003" },
+    { "key": "nombreCliente", "value": "Cliente Prueba" },
+    { "key": "fechaHoraInicio", "value": "2026-09-12T09:00:00" },
+    { "key": "fechaHoraDevolucion", "value": "2026-09-12T11:00:00" },
+    { "key": "duracionEstimadaHoras", "value": "2" }
+  ],
+  "item": [
+    {
+      "name": "Bicicletas",
+      "description": "Pruebas de registro, consulta y disponibilidad de bicicletas.",
+      "item": [
+        {
+          "name": "Registrar bicicleta - Urbana",
+          "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"codigo\": \"{{codigoBicicletaUrbana}}\",\n  \"tipo\": \"URBANA\",\n  \"estado\": \"DISPONIBLE\"\n}" }, "url": { "raw": "{{baseUrl}}/api/bicicletas", "host": ["{{baseUrl}}"], "path": ["api", "bicicletas"] }, "description": "Registra una bicicleta urbana. Espera 201 Created." },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('Status 201', () => pm.response.to.have.status(201));", "pm.test('Respuesta JSON', () => pm.response.to.be.json);", "pm.test('Codigo correcto', () => pm.expect(pm.response.json().codigo).to.eql(pm.variables.get('codigoBicicletaUrbana')));"] } }]
+        },
+        {
+          "name": "Registrar bicicleta - Montaña",
+          "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"codigo\": \"{{codigoBicicletaMontana}}\",\n  \"tipo\": \"MONTAÑA\",\n  \"estado\": \"DISPONIBLE\"\n}" }, "url": { "raw": "{{baseUrl}}/api/bicicletas", "host": ["{{baseUrl}}"], "path": ["api", "bicicletas"] }, "description": "Registra una bicicleta de montaña. Espera 201 Created." },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('Status 201', () => pm.response.to.have.status(201));", "pm.test('Respuesta JSON', () => pm.response.to.be.json);", "pm.test('Tipo correcto', () => pm.expect(pm.response.json().tipo).to.eql('MONTAÑA')); "] } }]
+        },
+        {
+          "name": "Registrar bicicleta - Eléctrica",
+          "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"codigo\": \"{{codigoBicicletaElectrica}}\",\n  \"tipo\": \"ELÉCTRICA\",\n  \"estado\": \"DISPONIBLE\"\n}" }, "url": { "raw": "{{baseUrl}}/api/bicicletas", "host": ["{{baseUrl}}"], "path": ["api", "bicicletas"] }, "description": "Registra una bicicleta eléctrica. Espera 201 Created." },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('Status 201', () => pm.response.to.have.status(201));", "pm.test('Respuesta JSON', () => pm.response.to.be.json);", "pm.test('Tipo correcto', () => pm.expect(pm.response.json().tipo).to.eql('ELÉCTRICA')); "] } }]
+        },
+        {
+          "name": "Buscar bicicleta existente",
+          "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/bicicletas/{{codigoBicicletaUrbana}}", "host": ["{{baseUrl}}"], "path": ["api", "bicicletas", "{{codigoBicicletaUrbana}}"] }, "description": "Consulta una bicicleta registrada. Espera 200 OK." },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('Status 200', () => pm.response.to.have.status(200));", "pm.test('Respuesta JSON', () => pm.response.to.be.json);", "pm.test('Estado disponible', () => pm.expect(pm.response.json().estado).to.eql('DISPONIBLE')); "] } }]
+        },
+        {
+          "name": "Buscar bicicleta inexistente",
+          "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/bicicletas/BIC-999", "host": ["{{baseUrl}}"], "path": ["api", "bicicletas", "BIC-999"] }, "description": "Consulta un codigo inexistente. Espera 404 Not Found." },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('Status 404', () => pm.response.to.have.status(404));", "pm.test('Respuesta JSON', () => pm.response.to.be.json);", "pm.test('Formato de error', () => pm.expect(pm.response.json()).to.have.property('message')); "] } }]
+        },
+        {
+          "name": "Consultar bicicletas disponibles",
+          "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/bicicletas/disponibles", "host": ["{{baseUrl}}"], "path": ["api", "bicicletas", "disponibles"] }, "description": "Consulta bicicletas en estado DISPONIBLE. Espera 200 OK." },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('Status 200', () => pm.response.to.have.status(200));", "pm.test('Respuesta JSON', () => pm.response.to.be.json);", "pm.test('Respuesta es lista', () => pm.expect(pm.response.json()).to.be.an('array')); "] } }]
+        },
+        {
+          "name": "Consultar disponibles por tipo Urbana",
+          "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/bicicletas/disponibles?tipo=URBANA", "host": ["{{baseUrl}}"], "path": ["api", "bicicletas", "disponibles"], "query": [{ "key": "tipo", "value": "URBANA" }] }, "description": "Filtra disponibilidad por URBANA. Espera 200 OK." },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('Status 200', () => pm.response.to.have.status(200));", "pm.test('Respuesta JSON', () => pm.response.to.be.json);", "pm.test('Todos son urbanos', () => pm.response.json().forEach(b => pm.expect(b.tipo).to.eql('URBANA'))); "] } }]
+        },
+        {
+          "name": "Consultar disponibles por tipo Montaña",
+          "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/bicicletas/disponibles?tipo=MONTAÑA", "host": ["{{baseUrl}}"], "path": ["api", "bicicletas", "disponibles"], "query": [{ "key": "tipo", "value": "MONTAÑA" }] }, "description": "Filtra disponibilidad por MONTAÑA. Espera 200 OK." },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('Status 200', () => pm.response.to.have.status(200));", "pm.test('Respuesta JSON', () => pm.response.to.be.json);", "pm.test('Todas son de montaña', () => pm.response.json().forEach(b => pm.expect(b.tipo).to.eql('MONTAÑA'))); "] } }]
+        },
+        {
+          "name": "Consultar disponibles por tipo Eléctrica",
+          "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/bicicletas/disponibles?tipo=ELÉCTRICA", "host": ["{{baseUrl}}"], "path": ["api", "bicicletas", "disponibles"], "query": [{ "key": "tipo", "value": "ELÉCTRICA" }] }, "description": "Filtra disponibilidad por ELÉCTRICA. Espera 200 OK." },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('Status 200', () => pm.response.to.have.status(200));", "pm.test('Respuesta JSON', () => pm.response.to.be.json);", "pm.test('Todas son electricas', () => pm.response.json().forEach(b => pm.expect(b.tipo).to.eql('ELÉCTRICA'))); "] } }]
+        },
+        {
+          "name": "Registrar código duplicado",
+          "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"codigo\": \"{{codigoBicicletaUrbana}}\",\n  \"tipo\": \"URBANA\",\n  \"estado\": \"DISPONIBLE\"\n}" }, "url": { "raw": "{{baseUrl}}/api/bicicletas", "host": ["{{baseUrl}}"], "path": ["api", "bicicletas"] }, "description": "Intenta registrar un codigo existente. Espera 409 Conflict." },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('Status 409', () => pm.response.to.have.status(409));", "pm.test('Respuesta JSON', () => pm.response.to.be.json); "] } }]
+        },
+        {
+          "name": "Registrar código vacío",
+          "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"codigo\": \"\",\n  \"tipo\": \"URBANA\",\n  \"estado\": \"DISPONIBLE\"\n}" }, "url": { "raw": "{{baseUrl}}/api/bicicletas", "host": ["{{baseUrl}}"], "path": ["api", "bicicletas"] }, "description": "Valida codigo obligatorio. Espera 400 Bad Request." },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('Status 400', () => pm.response.to.have.status(400));", "pm.test('Respuesta JSON', () => pm.response.to.be.json); "] } }]
+        },
+        {
+          "name": "Registrar tipo nulo",
+          "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"codigo\": \"BIC-004\",\n  \"tipo\": null,\n  \"estado\": \"EN_MANTENIMIENTO\"\n}" }, "url": { "raw": "{{baseUrl}}/api/bicicletas", "host": ["{{baseUrl}}"], "path": ["api", "bicicletas"] }, "description": "Valida tipo obligatorio. Espera 400 Bad Request." },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('Status 400', () => pm.response.to.have.status(400));", "pm.test('Respuesta JSON', () => pm.response.to.be.json); "] } }]
+        },
+        {
+          "name": "Consultar con tipo inválido",
+          "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/bicicletas/disponibles?tipo=INVALIDO", "host": ["{{baseUrl}}"], "path": ["api", "bicicletas", "disponibles"], "query": [{ "key": "tipo", "value": "INVALIDO" }] }, "description": "Valida tipo no permitido. Espera 400 Bad Request." },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('Status 400', () => pm.response.to.have.status(400));", "pm.test('Respuesta JSON', () => pm.response.to.be.json); "] } }]
+        }
+      ]
+    },
+    {
+      "name": "Alquileres",
+      "description": "Pruebas de inicio, finalizacion e historial de alquileres.",
+      "item": [
+        {
+          "name": "Iniciar alquiler",
+          "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"codigoBicicleta\": \"{{codigoBicicletaMontana}}\",\n  \"nombreCliente\": \"{{nombreCliente}}\",\n  \"fechaHoraInicio\": \"{{fechaHoraInicio}}\",\n  \"duracionEstimadaHoras\": {{duracionEstimadaHoras}}\n}" }, "url": { "raw": "{{baseUrl}}/api/alquileres", "host": ["{{baseUrl}}"], "path": ["api", "alquileres"] }, "description": "Inicia un alquiler y cambia la bicicleta a ALQUILADA. Espera 201 Created." },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('Status 201', () => pm.response.to.have.status(201));", "pm.test('Respuesta JSON', () => pm.response.to.be.json);", "pm.test('Estado activo', () => pm.expect(pm.response.json().estado).to.eql('ACTIVO'));", "pm.test('Codigo correcto', () => pm.expect(pm.response.json().codigoBicicleta).to.eql(pm.variables.get('codigoBicicletaMontana'))); "] } }]
+        },
+        {
+          "name": "Iniciar alquiler con bicicleta inexistente",
+          "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"codigoBicicleta\": \"BIC-999\",\n  \"nombreCliente\": \"{{nombreCliente}}\",\n  \"fechaHoraInicio\": \"{{fechaHoraInicio}}\",\n  \"duracionEstimadaHoras\": 2\n}" }, "url": { "raw": "{{baseUrl}}/api/alquileres", "host": ["{{baseUrl}}"], "path": ["api", "alquileres"] }, "description": "Inicia con una bicicleta inexistente. Espera 404 Not Found." },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('Status 404', () => pm.response.to.have.status(404));", "pm.test('Respuesta JSON', () => pm.response.to.be.json); "] } }]
+        },
+        {
+          "name": "Iniciar alquiler con bicicleta no disponible",
+          "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"codigoBicicleta\": \"{{codigoBicicletaMontana}}\",\n  \"nombreCliente\": \"Otro Cliente\",\n  \"fechaHoraInicio\": \"{{fechaHoraInicio}}\",\n  \"duracionEstimadaHoras\": 2\n}" }, "url": { "raw": "{{baseUrl}}/api/alquileres", "host": ["{{baseUrl}}"], "path": ["api", "alquileres"] }, "description": "Intenta alquilar una bicicleta ALQUILADA. Espera 409 Conflict." },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('Status 409', () => pm.response.to.have.status(409));", "pm.test('Respuesta JSON', () => pm.response.to.be.json); "] } }]
+        },
+        {
+          "name": "Iniciar alquiler eléctrico",
+          "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"codigoBicicleta\": \"{{codigoBicicletaElectrica}}\",\n  \"nombreCliente\": \"{{nombreCliente}}\",\n  \"fechaHoraInicio\": \"2026-09-12T09:00:00\",\n  \"duracionEstimadaHoras\": 2\n}" }, "url": { "raw": "{{baseUrl}}/api/alquileres", "host": ["{{baseUrl}}"], "path": ["api", "alquileres"] }, "description": "Inicia el alquiler eléctrico necesario para la prueba de retraso. Espera 201 Created." },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('Status 201', () => pm.response.to.have.status(201));", "pm.test('Respuesta JSON', () => pm.response.to.be.json);", "pm.test('Estado activo', () => pm.expect(pm.response.json().estado).to.eql('ACTIVO'));", "pm.test('Codigo eléctrico', () => pm.expect(pm.response.json().codigoBicicleta).to.eql('BIC-003')); "] } }]
+        },
+        {
+          "name": "Finalizar alquiler sin fecha",
+          "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{}" }, "url": { "raw": "{{baseUrl}}/api/alquileres/{{codigoBicicletaElectrica}}/finalizar", "host": ["{{baseUrl}}"], "path": ["api", "alquileres", "{{codigoBicicletaElectrica}}", "finalizar"] }, "description": "Valida fecha de devolución obligatoria mientras el alquiler eléctrico sigue ACTIVO. Espera 400 Bad Request." },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('Status 400', () => pm.response.to.have.status(400));", "pm.test('Respuesta JSON', () => pm.response.to.be.json);", "pm.test('Mensaje obligatorio', () => pm.expect(pm.response.json().message).to.eql('La fecha de devolución es obligatoria')); "] } }]
+        },
+        {
+          "name": "Registrar código de alquiler inválido",
+          "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"codigoBicicleta\": \"\",\n  \"nombreCliente\": \"{{nombreCliente}}\",\n  \"fechaHoraInicio\": \"{{fechaHoraInicio}}\",\n  \"duracionEstimadaHoras\": 2\n}" }, "url": { "raw": "{{baseUrl}}/api/alquileres", "host": ["{{baseUrl}}"], "path": ["api", "alquileres"] }, "description": "Valida codigoBicicleta obligatorio. Espera 400 Bad Request." },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('Status 400', () => pm.response.to.have.status(400));", "pm.test('Respuesta JSON', () => pm.response.to.be.json);", "pm.test('Mensaje presente', () => pm.expect(pm.response.json()).to.have.property('message')); "] } }]
+        },
+        {
+          "name": "Registrar cliente vacío",
+          "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"codigoBicicleta\": \"{{codigoBicicletaUrbana}}\",\n  \"nombreCliente\": \"\",\n  \"fechaHoraInicio\": \"{{fechaHoraInicio}}\",\n  \"duracionEstimadaHoras\": 2\n}" }, "url": { "raw": "{{baseUrl}}/api/alquileres", "host": ["{{baseUrl}}"], "path": ["api", "alquileres"] }, "description": "Valida nombreCliente obligatorio. Espera 400 Bad Request." },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('Status 400', () => pm.response.to.have.status(400));", "pm.test('Respuesta JSON', () => pm.response.to.be.json);", "pm.test('Mensaje presente', () => pm.expect(pm.response.json()).to.have.property('message')); "] } }]
+        },
+        {
+          "name": "Registrar fecha de inicio nula",
+          "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"codigoBicicleta\": \"{{codigoBicicletaUrbana}}\",\n  \"nombreCliente\": \"{{nombreCliente}}\",\n  \"fechaHoraInicio\": null,\n  \"duracionEstimadaHoras\": 2\n}" }, "url": { "raw": "{{baseUrl}}/api/alquileres", "host": ["{{baseUrl}}"], "path": ["api", "alquileres"] }, "description": "Valida fechaHoraInicio obligatoria. Espera 400 Bad Request." },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('Status 400', () => pm.response.to.have.status(400));", "pm.test('Respuesta JSON', () => pm.response.to.be.json);", "pm.test('Mensaje presente', () => pm.expect(pm.response.json()).to.have.property('message')); "] } }]
+        },
+        {
+          "name": "Registrar duración nula",
+          "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"codigoBicicleta\": \"{{codigoBicicletaUrbana}}\",\n  \"nombreCliente\": \"{{nombreCliente}}\",\n  \"fechaHoraInicio\": \"{{fechaHoraInicio}}\",\n  \"duracionEstimadaHoras\": null\n}" }, "url": { "raw": "{{baseUrl}}/api/alquileres", "host": ["{{baseUrl}}"], "path": ["api", "alquileres"] }, "description": "Valida duracionEstimadaHoras obligatoria. Espera 400 Bad Request." },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('Status 400', () => pm.response.to.have.status(400));", "pm.test('Respuesta JSON', () => pm.response.to.be.json);", "pm.test('Mensaje presente', () => pm.expect(pm.response.json()).to.have.property('message')); "] } }]
+        },
+        {
+          "name": "Registrar duración cero",
+          "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"codigoBicicleta\": \"{{codigoBicicletaUrbana}}\",\n  \"nombreCliente\": \"{{nombreCliente}}\",\n  \"fechaHoraInicio\": \"{{fechaHoraInicio}}\",\n  \"duracionEstimadaHoras\": 0\n}" }, "url": { "raw": "{{baseUrl}}/api/alquileres", "host": ["{{baseUrl}}"], "path": ["api", "alquileres"] }, "description": "Valida duracionEstimadaHoras mayor que cero. Espera 400 Bad Request." },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('Status 400', () => pm.response.to.have.status(400));", "pm.test('Respuesta JSON', () => pm.response.to.be.json);", "pm.test('Mensaje presente', () => pm.expect(pm.response.json()).to.have.property('message')); "] } }]
+        },
+        {
+          "name": "Registrar duración negativa",
+          "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"codigoBicicleta\": \"{{codigoBicicletaUrbana}}\",\n  \"nombreCliente\": \"{{nombreCliente}}\",\n  \"fechaHoraInicio\": \"{{fechaHoraInicio}}\",\n  \"duracionEstimadaHoras\": -1\n}" }, "url": { "raw": "{{baseUrl}}/api/alquileres", "host": ["{{baseUrl}}"], "path": ["api", "alquileres"] }, "description": "Valida duracionEstimadaHoras positiva. Espera 400 Bad Request." },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('Status 400', () => pm.response.to.have.status(400));", "pm.test('Respuesta JSON', () => pm.response.to.be.json);", "pm.test('Mensaje presente', () => pm.expect(pm.response.json()).to.have.property('message')); "] } }]
+        },
+        {
+          "name": "Finalizar alquiler con fecha inválida",
+          "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"fechaHoraDevolucion\": \"2026-09-12T08:00:00\"\n}" }, "url": { "raw": "{{baseUrl}}/api/alquileres/{{codigoBicicletaMontana}}/finalizar", "host": ["{{baseUrl}}"], "path": ["api", "alquileres", "{{codigoBicicletaMontana}}", "finalizar"] }, "description": "Prueba devolución inválida antes de finalizar BIC-002. Espera 400 y mantiene el alquiler ACTIVO." },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('Status 400', () => pm.response.to.have.status(400));", "pm.test('Respuesta JSON', () => pm.response.to.be.json);", "pm.test('Mensaje de fecha', () => pm.expect(pm.response.json().message).to.include('posterior')); "] } }]
+        },
+        {
+          "name": "Finalizar alquiler con retraso y multa",
+          "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"fechaHoraDevolucion\": \"2026-09-12T13:20:00\"\n}" }, "url": { "raw": "{{baseUrl}}/api/alquileres/{{codigoBicicletaElectrica}}/finalizar", "host": ["{{baseUrl}}"], "path": ["api", "alquileres", "{{codigoBicicletaElectrica}}", "finalizar"] }, "description": "Finaliza el alquiler eléctrico iniciado arriba. Espera 200 OK y verifica el cálculo real: 5 horas, 37500 de costo base, 11250 de multa y 48750 total." },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('Status 200', () => pm.response.to.have.status(200));", "pm.test('Respuesta JSON', () => pm.response.to.be.json);", "pm.test('Horas facturables correctas', () => pm.expect(pm.response.json().horasFacturables).to.eql(5));", "pm.test('Costo base correcto', () => pm.expect(pm.response.json().costoBase).to.eql(37500));", "pm.test('Multa correcta', () => pm.expect(pm.response.json().multa).to.eql(11250));", "pm.test('Total correcto', () => pm.expect(pm.response.json().total).to.eql(48750));"] } }]
+        },
+        {
+          "name": "Finalizar alquiler inexistente",
+          "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"fechaHoraDevolucion\": \"{{fechaHoraDevolucion}}\"\n}" }, "url": { "raw": "{{baseUrl}}/api/alquileres/BIC-999/finalizar", "host": ["{{baseUrl}}"], "path": ["api", "alquileres", "BIC-999", "finalizar"] }, "description": "Finaliza un alquiler inexistente. Espera 404 Not Found." },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('Status 404', () => pm.response.to.have.status(404));", "pm.test('Respuesta JSON', () => pm.response.to.be.json); "] } }]
+        },
+        {
+          "name": "Finalizar alquiler correctamente",
+          "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"fechaHoraDevolucion\": \"2026-09-12T11:00:00\"\n}" }, "url": { "raw": "{{baseUrl}}/api/alquileres/{{codigoBicicletaMontana}}/finalizar", "host": ["{{baseUrl}}"], "path": ["api", "alquileres", "{{codigoBicicletaMontana}}", "finalizar"] }, "description": "Finaliza BIC-002 después de probar la fecha inválida. Espera 200 OK y costo 10000 sin multa." },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('Status 200', () => pm.response.to.have.status(200));", "pm.test('Respuesta JSON', () => pm.response.to.be.json);", "pm.test('Estado finalizado', () => pm.expect(pm.response.json().estado).to.eql('FINALIZADO'));", "pm.test('Horas facturables correctas', () => pm.expect(pm.response.json().horasFacturables).to.eql(2));", "pm.test('Costo base correcto', () => pm.expect(pm.response.json().costoBase).to.eql(10000));", "pm.test('Multa correcta', () => pm.expect(pm.response.json().multa).to.eql(0));", "pm.test('Total correcto', () => pm.expect(pm.response.json().total).to.eql(10000));"] } }]
+        },
+        {
+          "name": "Finalizar alquiler nuevamente",
+          "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"fechaHoraDevolucion\": \"2026-09-12T12:00:00\"\n}" }, "url": { "raw": "{{baseUrl}}/api/alquileres/{{codigoBicicletaMontana}}/finalizar", "host": ["{{baseUrl}}"], "path": ["api", "alquileres", "{{codigoBicicletaMontana}}", "finalizar"] }, "description": "Segundo intento después de finalizar BIC-002. El servicio busca solo alquileres activos, por lo que el comportamiento real esperado es 404." },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('Status 404', () => pm.response.to.have.status(404));", "pm.test('Respuesta JSON', () => pm.response.to.be.json);"] } }]
+        },
+        {
+          "name": "Consultar historial de alquileres",
+          "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/alquileres/bicicletas/{{codigoBicicletaMontana}}", "host": ["{{baseUrl}}"], "path": ["api", "alquileres", "bicicletas", "{{codigoBicicletaMontana}}"] }, "description": "Consulta todos los alquileres de una bicicleta. Espera 200 OK y una lista JSON." },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('Status 200', () => pm.response.to.have.status(200));", "pm.test('Respuesta JSON', () => pm.response.to.be.json);", "pm.test('Respuesta es lista', () => pm.expect(pm.response.json()).to.be.an('array')); "] } }]
+        }
+      ]
+    },
+    {
+      "name": "Flujo completo",
+      "description": "Flujo manual recomendado: registrar, consultar, iniciar, verificar ALQUILADA, finalizar, verificar DISPONIBLE e historial.",
+      "item": [
+        {
+          "name": "Registrar bicicleta de flujo",
+          "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"codigo\": \"BIC-FLUJO-001\",\n  \"tipo\": \"MONTAÑA\",\n  \"estado\": \"DISPONIBLE\"\n}" }, "url": { "raw": "{{baseUrl}}/api/bicicletas", "host": ["{{baseUrl}}"], "path": ["api", "bicicletas"] }, "description": "Paso 1: registra la bicicleta usada por el flujo." },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('Status 201', () => pm.response.to.have.status(201));"] } }]
+        },
+        {
+          "name": "Consultar disponibilidad de flujo",
+          "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/bicicletas/disponibles", "host": ["{{baseUrl}}"], "path": ["api", "bicicletas", "disponibles"] }, "description": "Paso 2: verifica que la bicicleta aparece disponible." },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('Status 200', () => pm.response.to.have.status(200));"] } }]
+        },
+        {
+          "name": "Iniciar alquiler de flujo",
+          "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"codigoBicicleta\": \"BIC-FLUJO-001\",\n  \"nombreCliente\": \"Cliente Flujo\",\n  \"fechaHoraInicio\": \"2026-09-12T09:00:00\",\n  \"duracionEstimadaHoras\": 2\n}" }, "url": { "raw": "{{baseUrl}}/api/alquileres", "host": ["{{baseUrl}}"], "path": ["api", "alquileres"] }, "description": "Paso 3: inicia el alquiler. Espera 201 Created." },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('Status 201', () => pm.response.to.have.status(201));"] } }]
+        },
+        {
+          "name": "Consultar bicicleta alquilada",
+          "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/bicicletas/BIC-FLUJO-001", "host": ["{{baseUrl}}"], "path": ["api", "bicicletas", "BIC-FLUJO-001"] }, "description": "Paso 4 y 5: verifica que la bicicleta queda ALQUILADA." },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('Status 200', () => pm.response.to.have.status(200));", "pm.test('Estado alquilada', () => pm.expect(pm.response.json().estado).to.eql('ALQUILADA')); "] } }]
+        },
+        {
+          "name": "Intentar segundo alquiler de flujo",
+          "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"codigoBicicleta\": \"BIC-FLUJO-001\",\n  \"nombreCliente\": \"Segundo Cliente\",\n  \"fechaHoraInicio\": \"2026-09-12T10:00:00\",\n  \"duracionEstimadaHoras\": 1\n}" }, "url": { "raw": "{{baseUrl}}/api/alquileres", "host": ["{{baseUrl}}"], "path": ["api", "alquileres"] }, "description": "Paso 6: intenta alquilar la bicicleta ALQUILADA. Espera 409 Conflict." },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('Status 409', () => pm.response.to.have.status(409));"] } }]
+        },
+        {
+          "name": "Finalizar alquiler de flujo",
+          "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"fechaHoraDevolucion\": \"2026-09-12T11:20:00\"\n}" }, "url": { "raw": "{{baseUrl}}/api/alquileres/BIC-FLUJO-001/finalizar", "host": ["{{baseUrl}}"], "path": ["api", "alquileres", "BIC-FLUJO-001", "finalizar"] }, "description": "Paso 7: finaliza con retraso y verifica importes devueltos." },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('Status 200', () => pm.response.to.have.status(200));", "pm.test('Horas facturables correctas', () => pm.expect(pm.response.json().horasFacturables).to.eql(3));", "pm.test('Costo base correcto', () => pm.expect(pm.response.json().costoBase).to.eql(15000));", "pm.test('Multa correcta', () => pm.expect(pm.response.json().multa).to.eql(2500));", "pm.test('Total correcto', () => pm.expect(pm.response.json().total).to.eql(17500));"] } }]
+        },
+        {
+          "name": "Verificar bicicleta disponible después",
+          "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/bicicletas/BIC-FLUJO-001", "host": ["{{baseUrl}}"], "path": ["api", "bicicletas", "BIC-FLUJO-001"] }, "description": "Paso 8: verifica que vuelve a DISPONIBLE." },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('Status 200', () => pm.response.to.have.status(200));", "pm.test('Estado disponible', () => pm.expect(pm.response.json().estado).to.eql('DISPONIBLE')); "] } }]
+        },
+        {
+          "name": "Consultar historial de flujo",
+          "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/alquileres/bicicletas/BIC-FLUJO-001", "host": ["{{baseUrl}}"], "path": ["api", "alquileres", "bicicletas", "BIC-FLUJO-001"] }, "description": "Paso 9: consulta el historial finalizado." },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('Status 200', () => pm.response.to.have.status(200));", "pm.test('Historial es lista', () => pm.expect(pm.response.json()).to.be.an('array')); "] } }]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+$kind: http-request
+description: Finaliza BIC-002 después de probar la fecha inválida. Espera 200 OK y costo 10000 sin multa.
+url: "{{baseUrl}}/api/alquileres/{{codigoBicicletaMontana}}/finalizar"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "fechaHoraDevolucion": "2026-09-12T11:00:00"
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('Status 200', () => pm.response.to.have.status(200));
+      pm.test('Respuesta JSON', () => pm.response.to.be.json);
+      pm.test('Estado finalizado', () => pm.expect(pm.response.json().estado).to.eql('FINALIZADO'));
+      pm.test('Horas facturables correctas', () => pm.expect(pm.response.json().horasFacturables).to.eql(2));
+      pm.test('Costo base correcto', () => pm.expect(pm.response.json().costoBase).to.eql(10000));
+      pm.test('Multa correcta', () => pm.expect(pm.response.json().multa).to.eql(0));
+      pm.test('Total correcto', () => pm.expect(pm.response.json().total).to.eql(10000));
+    language: text/javascript
+order: 15000

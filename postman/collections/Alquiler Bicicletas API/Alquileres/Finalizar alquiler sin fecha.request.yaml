@@ -1,0 +1,17 @@
+$kind: http-request
+description: Valida fecha de devolución obligatoria mientras el alquiler eléctrico sigue ACTIVO. Espera 400 Bad Request.
+url: "{{baseUrl}}/api/alquileres/{{codigoBicicletaElectrica}}/finalizar"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: text
+  content: "{}"
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('Status 400', () => pm.response.to.have.status(400));
+      pm.test('Respuesta JSON', () => pm.response.to.be.json);
+      pm.test('Mensaje obligatorio', () => pm.expect(pm.response.json().message).to.eql('La fecha de devolución es obligatoria')); 
+    language: text/javascript
+order: 5000

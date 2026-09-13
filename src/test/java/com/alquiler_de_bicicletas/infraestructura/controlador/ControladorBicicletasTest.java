@@ -1,8 +1,7 @@
 package com.alquiler_de_bicicletas.infraestructura.controlador;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -39,12 +38,13 @@ class ControladorBicicletasTest {
 
     @Test
         void deberiaCrearBicicletaCuandoLaSolicitudEsValida() throws Exception {
-        when(puertoEntradaBicicletas.registrar("BIC-001", TipoBicicleta.URBANA))
+                when(puertoEntradaBicicletas.registrar(
+                                "BIC-001", TipoBicicleta.URBANA, EstadoBicicleta.DISPONIBLE))
                 .thenReturn(bicicleta("BIC-001", TipoBicicleta.URBANA));
 
         mockMvc.perform(post("/api/bicicletas")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"codigo\":\"BIC-001\",\"tipo\":\"URBANA\"}"))
+                        .content("{\"codigo\":\"BIC-001\",\"tipo\":\"URBANA\",\"estado\":\"DISPONIBLE\"}"))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.codigo").value("BIC-001"))
                 .andExpect(jsonPath("$.tipo").value("URBANA"))
@@ -55,7 +55,7 @@ class ControladorBicicletasTest {
         void deberiaRetornarSolicitudInvalidaCuandoElCodigoEstaVacio() throws Exception {
         mockMvc.perform(post("/api/bicicletas")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"codigo\":\"   \",\"tipo\":\"URBANA\"}"))
+                        .content("{\"codigo\":\"   \",\"tipo\":\"URBANA\",\"estado\":\"DISPONIBLE\"}"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value(400));
     }
@@ -64,19 +64,20 @@ class ControladorBicicletasTest {
         void deberiaRetornarSolicitudInvalidaCuandoElTipoEsNulo() throws Exception {
         mockMvc.perform(post("/api/bicicletas")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"codigo\":\"BIC-001\",\"tipo\":null}"))
+                        .content("{\"codigo\":\"BIC-001\",\"tipo\":null,\"estado\":\"DISPONIBLE\"}"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value(400));
     }
 
     @Test
         void deberiaRetornarConflictoCuandoElCodigoYaExiste() throws Exception {
-        when(puertoEntradaBicicletas.registrar("BIC-001", TipoBicicleta.URBANA))
+                when(puertoEntradaBicicletas.registrar(
+                                "BIC-001", TipoBicicleta.URBANA, EstadoBicicleta.DISPONIBLE))
                 .thenThrow(new BicicletaYaExisteException("BIC-001"));
 
         mockMvc.perform(post("/api/bicicletas")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"codigo\":\"BIC-001\",\"tipo\":\"URBANA\"}"))
+                        .content("{\"codigo\":\"BIC-001\",\"tipo\":\"URBANA\",\"estado\":\"DISPONIBLE\"}"))
                 .andExpect(status().isConflict())
                 .andExpect(jsonPath("$.status").value(409));
     }

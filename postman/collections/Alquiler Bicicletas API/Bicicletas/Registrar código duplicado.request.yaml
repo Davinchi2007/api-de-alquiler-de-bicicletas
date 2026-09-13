@@ -1,0 +1,20 @@
+$kind: http-request
+description: Intenta registrar un codigo existente. Espera 409 Conflict.
+url: "{{baseUrl}}/api/bicicletas"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "codigo": "{{codigoBicicletaUrbana}}",
+      "tipo": "URBANA"
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('Status 409', () => pm.response.to.have.status(409));
+      pm.test('Respuesta JSON', () => pm.response.to.be.json); 
+    language: text/javascript
+order: 10000

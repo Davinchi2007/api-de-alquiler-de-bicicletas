@@ -1,0 +1,14 @@
+$kind: http-request
+description: Filtra disponibilidad por URBANA. Espera 200 OK.
+url: "{{baseUrl}}/api/bicicletas/disponibles?tipo=URBANA"
+method: GET
+queryParams:
+  tipo: URBANA
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('Status 200', () => pm.response.to.have.status(200));
+      pm.test('Respuesta JSON', () => pm.response.to.be.json);
+      pm.test('Todos son urbanos', () => pm.response.json().forEach(b => pm.expect(b.tipo).to.eql('URBANA'))); 
+    language: text/javascript
+order: 7000

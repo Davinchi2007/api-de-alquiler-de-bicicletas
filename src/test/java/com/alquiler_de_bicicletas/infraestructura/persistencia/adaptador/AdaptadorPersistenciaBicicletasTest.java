@@ -40,6 +40,7 @@ class AdaptadorPersistenciaBicicletasTest {
     void deberiaGuardarBicicletaYConvertirEntidadADominio() {
         Bicicleta bicicleta = bicicleta("BIC-001", TipoBicicleta.URBANA, EstadoBicicleta.DISPONIBLE);
         EntidadJpaBicicleta entidadGuardada = entidad("BIC-001", TipoBicicleta.URBANA, EstadoBicicleta.DISPONIBLE);
+        when(repositorioJpaBicicletas.buscarPorCodigo("BIC-001")).thenReturn(Optional.empty());
         when(repositorioJpaBicicletas.save(any(EntidadJpaBicicleta.class))).thenReturn(entidadGuardada);
 
         Bicicleta resultado = adaptadorPersistenciaBicicletas.guardar(bicicleta);
@@ -52,6 +53,35 @@ class AdaptadorPersistenciaBicicletasTest {
         assertEquals("BIC-001", resultado.getCodigo());
         assertEquals(TipoBicicleta.URBANA, resultado.getTipo());
         assertEquals(EstadoBicicleta.DISPONIBLE, resultado.getEstado());
+    }
+
+    @Test
+    void deberiaActualizarBicicletaExistenteConservandoLaEntidad() {
+        Bicicleta bicicleta = bicicleta("BIC-001", TipoBicicleta.URBANA, EstadoBicicleta.ALQUILADA);
+        EntidadJpaBicicleta entidadExistente = entidad("BIC-001", TipoBicicleta.URBANA,
+                EstadoBicicleta.DISPONIBLE);
+        when(repositorioJpaBicicletas.buscarPorCodigo("BIC-001")).thenReturn(Optional.of(entidadExistente));
+        when(repositorioJpaBicicletas.save(entidadExistente)).thenReturn(entidadExistente);
+
+        Bicicleta resultado = adaptadorPersistenciaBicicletas.guardar(bicicleta);
+
+        verify(repositorioJpaBicicletas).save(entidadExistente);
+        assertEquals(EstadoBicicleta.ALQUILADA, entidadExistente.getEstado());
+        assertEquals(EstadoBicicleta.ALQUILADA, resultado.getEstado());
+    }
+
+    @Test
+    void deberiaActualizarBicicletaAlDevolverlaSinCrearOtraEntidad() {
+        Bicicleta bicicleta = bicicleta("BIC-001", TipoBicicleta.URBANA, EstadoBicicleta.DISPONIBLE);
+        EntidadJpaBicicleta entidadExistente = entidad("BIC-001", TipoBicicleta.URBANA,
+                EstadoBicicleta.ALQUILADA);
+        when(repositorioJpaBicicletas.buscarPorCodigo("BIC-001")).thenReturn(Optional.of(entidadExistente));
+        when(repositorioJpaBicicletas.save(entidadExistente)).thenReturn(entidadExistente);
+
+        adaptadorPersistenciaBicicletas.guardar(bicicleta);
+
+        verify(repositorioJpaBicicletas).save(entidadExistente);
+        assertEquals(EstadoBicicleta.DISPONIBLE, entidadExistente.getEstado());
     }
 
     @Test

@@ -1,0 +1,23 @@
+$kind: http-request
+description: "Finaliza el alquiler eléctrico iniciado arriba. Espera 200 OK y verifica el cálculo real: 5 horas, 37500 de costo base, 11250 de multa y 48750 total."
+url: "{{baseUrl}}/api/alquileres/{{codigoBicicletaElectrica}}/finalizar"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "fechaHoraDevolucion": "2026-09-12T13:20:00"
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('Status 200', () => pm.response.to.have.status(200));
+      pm.test('Respuesta JSON', () => pm.response.to.be.json);
+      pm.test('Horas facturables correctas', () => pm.expect(pm.response.json().horasFacturables).to.eql(5));
+      pm.test('Costo base correcto', () => pm.expect(pm.response.json().costoBase).to.eql(37500));
+      pm.test('Multa correcta', () => pm.expect(pm.response.json().multa).to.eql(11250));
+      pm.test('Total correcto', () => pm.expect(pm.response.json().total).to.eql(48750));
+    language: text/javascript
+order: 13000

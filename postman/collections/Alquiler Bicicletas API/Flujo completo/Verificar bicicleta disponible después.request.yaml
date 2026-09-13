@@ -1,0 +1,11 @@
+$kind: http-request
+description: "Paso 8: verifica que vuelve a DISPONIBLE."
+url: "{{baseUrl}}/api/bicicletas/BIC-FLUJO-001"
+method: GET
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('Status 200', () => pm.response.to.have.status(200));
+      pm.test('Estado disponible', () => pm.expect(pm.response.json().estado).to.eql('DISPONIBLE')); 
+    language: text/javascript
+order: 7000

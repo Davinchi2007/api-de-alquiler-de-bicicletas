@@ -42,7 +42,8 @@ class ServicioGestionBicicletasTest {
         Bicicleta bicicletaGuardada = bicicleta("BIC-001", TipoBicicleta.URBANA, EstadoBicicleta.DISPONIBLE);
         when(repositorioBicicletas.guardar(any(Bicicleta.class))).thenReturn(bicicletaGuardada);
 
-        Bicicleta resultado = servicioGestionBicicletas.registrar("BIC-001", TipoBicicleta.URBANA);
+        Bicicleta resultado = servicioGestionBicicletas.registrar(
+            "BIC-001", TipoBicicleta.URBANA, EstadoBicicleta.DISPONIBLE);
 
         ArgumentCaptor<Bicicleta> captor = ArgumentCaptor.forClass(Bicicleta.class);
         verify(repositorioBicicletas).existePorCodigo("BIC-001");
@@ -53,13 +54,27 @@ class ServicioGestionBicicletasTest {
         assertEquals(bicicletaGuardada, resultado);
     }
 
+        @Test
+        void deberiaRegistrarBicicletaEnMantenimiento() {
+        when(repositorioBicicletas.existePorCodigo("BIC-004")).thenReturn(false);
+        when(repositorioBicicletas.guardar(any(Bicicleta.class)))
+            .thenAnswer(invocacion -> invocacion.getArgument(0));
+
+        Bicicleta resultado = servicioGestionBicicletas.registrar(
+            "BIC-004", TipoBicicleta.MONTAÑA, EstadoBicicleta.EN_MANTENIMIENTO);
+
+        assertEquals(EstadoBicicleta.EN_MANTENIMIENTO, resultado.getEstado());
+        verify(repositorioBicicletas).guardar(any(Bicicleta.class));
+        }
+
     @Test
     void deberiaRechazarRegistroCuandoElCodigoYaExiste() {
         when(repositorioBicicletas.existePorCodigo("BIC-001")).thenReturn(true);
 
         BicicletaYaExisteException exception = assertThrows(
                 BicicletaYaExisteException.class,
-                () -> servicioGestionBicicletas.registrar("BIC-001", TipoBicicleta.URBANA));
+                () -> servicioGestionBicicletas.registrar(
+                    "BIC-001", TipoBicicleta.URBANA, EstadoBicicleta.DISPONIBLE));
 
         verify(repositorioBicicletas).existePorCodigo("BIC-001");
         verify(repositorioBicicletas, never()).guardar(any(Bicicleta.class));

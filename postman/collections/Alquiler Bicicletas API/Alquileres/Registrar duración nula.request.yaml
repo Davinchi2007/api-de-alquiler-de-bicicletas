@@ -1,0 +1,23 @@
+$kind: http-request
+description: Valida duracionEstimadaHoras obligatoria. Espera 400 Bad Request.
+url: "{{baseUrl}}/api/alquileres"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "codigoBicicleta": "{{codigoBicicletaUrbana}}",
+      "nombreCliente": "{{nombreCliente}}",
+      "fechaHoraInicio": "{{fechaHoraInicio}}",
+      "duracionEstimadaHoras": null
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('Status 400', () => pm.response.to.have.status(400));
+      pm.test('Respuesta JSON', () => pm.response.to.be.json);
+      pm.test('Mensaje presente', () => pm.expect(pm.response.json()).to.have.property('message')); 
+    language: text/javascript
+order: 9000

@@ -1,0 +1,22 @@
+$kind: http-request
+description: Inicia con una bicicleta inexistente. Espera 404 Not Found.
+url: "{{baseUrl}}/api/alquileres"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "codigoBicicleta": "BIC-999",
+      "nombreCliente": "{{nombreCliente}}",
+      "fechaHoraInicio": "{{fechaHoraInicio}}",
+      "duracionEstimadaHoras": 2
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('Status 404', () => pm.response.to.have.status(404));
+      pm.test('Respuesta JSON', () => pm.response.to.be.json); 
+    language: text/javascript
+order: 2000
