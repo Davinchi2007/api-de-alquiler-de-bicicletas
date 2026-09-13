@@ -20,14 +20,15 @@ import com.alquiler_de_bicicletas.infraestructura.controlador.mapeador.MapeadorB
 import com.alquiler_de_bicicletas.infraestructura.excepcion.ManejadorGlobalExcepciones;
 
 @WebMvcTest(ControladorBicicletas.class)
-@Import({SeguridadConfiguracion.class, MapeadorBicicletaRespuesta.class, ManejadorGlobalExcepciones.class})
+@Import({SeguridadConfiguracion.class,
+        MapeadorBicicletaRespuesta.class, ManejadorGlobalExcepciones.class})
 @TestPropertySource(properties = "app.seguridad.cors.origenes-permitidos=http://localhost:3000")
 class SeguridadConfiguracionTest {
 
     @Autowired
     private MockMvc mockMvc;
 
-    @MockitoBean
+        @MockitoBean
         private PuertoEntradaGestionBicicletas puertoEntradaBicicletas;
 
     @Test

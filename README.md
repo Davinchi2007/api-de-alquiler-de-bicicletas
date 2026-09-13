@@ -44,6 +44,20 @@ CORS_ALLOWED_ORIGINS=http://localhost:3000,https://frontend.example.com
 La API usa headers defensivos, no mantiene sesiones y expone de Actuator solo
 `/actuator/health` y `/actuator/info`.
 
+## Observabilidad
+
+La API usa SLF4J con Logback a traves de Spring Boot. El nivel general es
+`INFO`; los detalles de diagnostico pueden habilitarse para el paquete de la
+aplicacion con nivel `DEBUG` sin activar todo el ruido de Spring.
+
+Cada solicitud recibe o propaga un `X-Correlation-Id`. El identificador se
+incluye en los logs mediante MDC y se devuelve en la respuesta para facilitar
+el seguimiento entre cliente, API y persistencia. El MDC se limpia siempre al
+terminar la solicitud.
+
+Los logs registran eventos de negocio y errores tecnicos sin incluir
+contraseñas, tokens, credenciales ni payloads completos con datos sensibles.
+
 Flyway crea y valida las tablas al iniciar la aplicacion.
 
 ## Ejecutar

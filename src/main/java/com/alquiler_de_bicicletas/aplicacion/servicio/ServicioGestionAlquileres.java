@@ -3,6 +3,8 @@ package com.alquiler_de_bicicletas.aplicacion.servicio;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,10 +17,13 @@ import com.alquiler_de_bicicletas.aplicacion.puerto.salida.PuertoSalidaRepositor
 import com.alquiler_de_bicicletas.aplicacion.puerto.salida.PuertoSalidaRepositorioBicicletas;
 import com.alquiler_de_bicicletas.dominio.modelo.Alquiler;
 import com.alquiler_de_bicicletas.dominio.modelo.Bicicleta;
+import com.alquiler_de_bicicletas.dominio.excepcion.TransicionEstadoBicicletaInvalidaException;
 
 @Service
 public class ServicioGestionAlquileres implements PuertoEntradaIniciarAlquiler,
     PuertoEntradaFinalizarAlquiler, PuertoEntradaConsultarHistorialAlquileres {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ServicioGestionAlquileres.class);
 
     private final PuertoSalidaRepositorioBicicletas repositorioBicicletas;
     private final PuertoSalidaRepositorioAlquileres repositorioAlquileres;
@@ -38,7 +43,13 @@ public class ServicioGestionAlquileres implements PuertoEntradaIniciarAlquiler,
             LocalDateTime fechaHoraInicio,
             long duracionEstimadaHoras) {
         Bicicleta bicicleta = buscarBicicleta(codigoBicicleta);
-        bicicleta.alquilar();
+            try {
+                bicicleta.alquilar();
+            } catch (TransicionEstadoBicicletaInvalidaException exception) {
+                LOGGER.warn("Alquiler rechazado: bicicleta no disponible codigoBicicleta={} estado={}",
+                        codigoBicicleta, bicicleta.getEstado());
+                throw exception;
+            }
 
         Alquiler alquiler = new Alquiler(
                 codigoBicicleta,
@@ -48,6 +59,8 @@ public class ServicioGestionAlquileres implements PuertoEntradaIniciarAlquiler,
                 bicicleta.getTipo().obtenerTarifa());
         Alquiler alquilerGuardado = repositorioAlquileres.guardar(alquiler);
         repositorioBicicletas.guardar(bicicleta);
+        LOGGER.info("Alquiler iniciado codigoBicicleta={} duracionEstimadaHoras={}",
+            codigoBicicleta, duracionEstimadaHoras);
 
         return alquilerGuardado;
     }
@@ -55,8 +68,11 @@ public class ServicioGestionAlquileres implements PuertoEntradaIniciarAlquiler,
     @Override
     @Transactional
     public Alquiler finalizarAlquiler(String codigoBicicleta, LocalDateTime fechaHoraDevolucion) {
-        Alquiler alquiler = repositorioAlquileres.buscarActivoPorCodigoBicicleta(codigoBicicleta)
-                .orElseThrow(() -> new AlquilerNoEncontradoException(codigoBicicleta));
+        Alquiler alquiler = repositorioAlquileres.buscarActivoPorCodigoBicicleta(codigoBicicleta).orElse(null);
+        if (alquiler == null) {
+            LOGGER.warn("Finalización rechazada: no existe alquiler activo codigoBicicleta={}", codigoBicicleta);
+            throw new AlquilerNoEncontradoException(codigoBicicleta);
+        }
         Bicicleta bicicleta = buscarBicicleta(codigoBicicleta);
 
         alquiler.finalizar(fechaHoraDevolucion);
@@ -64,6 +80,8 @@ public class ServicioGestionAlquileres implements PuertoEntradaIniciarAlquiler,
 
         Alquiler alquilerGuardado = repositorioAlquileres.guardar(alquiler);
         repositorioBicicletas.guardar(bicicleta);
+        LOGGER.info("Alquiler finalizado codigoBicicleta={} total={}",
+            codigoBicicleta, alquilerGuardado.getTotal());
 
         return alquilerGuardado;
     }
@@ -72,6 +90,7 @@ public class ServicioGestionAlquileres implements PuertoEntradaIniciarAlquiler,
     @Transactional(readOnly = true)
     public List<Alquiler> consultarHistorialAlquileres(String codigoBicicleta) {
         buscarBicicleta(codigoBicicleta);
+        LOGGER.debug("Historial consultado codigoBicicleta={}", codigoBicicleta);
         return repositorioAlquileres.buscarPorCodigoBicicleta(codigoBicicleta);
     }
 

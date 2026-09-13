@@ -5,6 +5,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -20,6 +22,8 @@ import com.alquiler_de_bicicletas.infraestructura.controlador.dto.RespuestaError
 
 @RestControllerAdvice
 public class ManejadorGlobalExcepciones {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ManejadorGlobalExcepciones.class);
 
     @ExceptionHandler(BicicletaYaExisteException.class)
     public ResponseEntity<RespuestaErrorDTO> manejarBicicletaYaExiste(BicicletaYaExisteException exception) {
@@ -76,6 +80,7 @@ public class ManejadorGlobalExcepciones {
 
     @ExceptionHandler({DataIntegrityViolationException.class, ObjectOptimisticLockingFailureException.class})
     public ResponseEntity<RespuestaErrorDTO> manejarConflictoPersistencia(Exception exception) {
+        LOGGER.warn("Conflicto de persistencia al procesar la solicitud: {}", exception.getClass().getSimpleName());
         return respuestaError(HttpStatus.CONFLICT,
                 "La operación entra en conflicto con el estado actual de los datos");
     }
@@ -87,6 +92,7 @@ public class ManejadorGlobalExcepciones {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<RespuestaErrorDTO> manejarErrorInesperado(Exception exception) {
+        LOGGER.error("Error inesperado al procesar la solicitud", exception);
         return respuestaError(HttpStatus.INTERNAL_SERVER_ERROR,
                 "Ocurrió un error interno al procesar la solicitud");
     }
