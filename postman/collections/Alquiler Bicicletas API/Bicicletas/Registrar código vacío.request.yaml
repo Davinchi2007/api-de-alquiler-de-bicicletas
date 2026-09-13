@@ -1,0 +1,21 @@
+$kind: http-request
+description: Valida codigo obligatorio. Espera 400 Bad Request.
+url: "{{baseUrl}}/api/bicicletas"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "codigo": "",
+      "tipo": "URBANA",
+      "estado": "DISPONIBLE"
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('Status 400', () => pm.response.to.have.status(400));
+      pm.test('Respuesta JSON', () => pm.response.to.be.json); 
+    language: text/javascript
+order: 11000

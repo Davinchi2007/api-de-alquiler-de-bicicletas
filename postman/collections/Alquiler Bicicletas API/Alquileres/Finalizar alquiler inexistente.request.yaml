@@ -1,0 +1,19 @@
+$kind: http-request
+description: Finaliza un alquiler inexistente. Espera 404 Not Found.
+url: "{{baseUrl}}/api/alquileres/BIC-999/finalizar"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "fechaHoraDevolucion": "{{fechaHoraDevolucion}}"
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('Status 404', () => pm.response.to.have.status(404));
+      pm.test('Respuesta JSON', () => pm.response.to.be.json); 
+    language: text/javascript
+order: 14000

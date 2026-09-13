@@ -1,0 +1,20 @@
+$kind: http-request
+description: Prueba devolución inválida antes de finalizar BIC-002. Espera 400 y mantiene el alquiler ACTIVO.
+url: "{{baseUrl}}/api/alquileres/{{codigoBicicletaMontana}}/finalizar"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "fechaHoraDevolucion": "2026-09-12T08:00:00"
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('Status 400', () => pm.response.to.have.status(400));
+      pm.test('Respuesta JSON', () => pm.response.to.be.json);
+      pm.test('Mensaje de fecha', () => pm.expect(pm.response.json().message).to.include('posterior')); 
+    language: text/javascript
+order: 12000

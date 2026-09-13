@@ -1,0 +1,14 @@
+.git
+.gradle
+build
+bin
+out
+.idea
+.vscode
+*.iml
+*.log
+.env
+.env.*
+README.md
+postman
+.postman

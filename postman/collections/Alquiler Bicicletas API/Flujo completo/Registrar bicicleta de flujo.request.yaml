@@ -1,0 +1,19 @@
+$kind: http-request
+description: "Paso 1: registra la bicicleta usada por el flujo."
+url: "{{baseUrl}}/api/bicicletas"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "codigo": "BIC-FLUJO-001",
+      "tipo": "MONTAÑA",
+      "estado": "DISPONIBLE"
+    }
+scripts:
+  - type: afterResponse
+    code: pm.test('Status 201', () => pm.response.to.have.status(201));
+    language: text/javascript
+order: 1000

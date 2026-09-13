@@ -1,0 +1,41 @@
+spring:
+  application:
+    name: api-de-alquiler-de-bicicletas
+
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+
+  flyway:
+    enabled: true
+
+server:
+  port: 8080
+
+logging:
+  level:
+    root: INFO
+    com.alquiler_de_bicicletas: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX} %-5level [%X{correlationId:-sin-correlacion}] %logger{36} - %msg%n"
+
+app:
+  seguridad:
+    cors:
+      origenes-permitidos: ${CORS_ALLOWED_ORIGINS:http://localhost:3000}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      probes:
+        enabled: true

@@ -1,0 +1,14 @@
+$kind: http-request
+description: Filtra disponibilidad por MONTAÑA. Espera 200 OK.
+url: "{{baseUrl}}/api/bicicletas/disponibles?tipo=MONTAÑA"
+method: GET
+queryParams:
+  tipo: MONTAÑA
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('Status 200', () => pm.response.to.have.status(200));
+      pm.test('Respuesta JSON', () => pm.response.to.be.json);
+      pm.test('Todas son de montaña', () => pm.response.json().forEach(b => pm.expect(b.tipo).to.eql('MONTAÑA'))); 
+    language: text/javascript
+order: 8000

@@ -1,0 +1,11 @@
+$kind: collection
+description: Coleccion manual para validar RF-01 a RF-05 de la API de alquiler de bicicletas. Requiere la API ejecutandose y PostgreSQL configurado mediante variables de entorno.
+variables:
+  baseUrl: http://localhost:8080
+  codigoBicicletaUrbana: BIC-001
+  codigoBicicletaMontana: BIC-002
+  codigoBicicletaElectrica: BIC-003
+  nombreCliente: Cliente Prueba
+  fechaHoraInicio: 2026-09-12T09:00:00
+  fechaHoraDevolucion: 2026-09-12T11:00:00
+  duracionEstimadaHoras: "2"

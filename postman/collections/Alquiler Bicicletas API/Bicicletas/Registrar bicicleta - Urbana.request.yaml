@@ -1,0 +1,22 @@
+$kind: http-request
+description: Registra una bicicleta urbana. Espera 201 Created.
+url: "{{baseUrl}}/api/bicicletas"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "codigo": "{{codigoBicicletaUrbana}}",
+      "tipo": "URBANA",
+      "estado": "DISPONIBLE"
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('Status 201', () => pm.response.to.have.status(201));
+      pm.test('Respuesta JSON', () => pm.response.to.be.json);
+      pm.test('Codigo correcto', () => pm.expect(pm.response.json().codigo).to.eql(pm.variables.get('codigoBicicletaUrbana')));
+    language: text/javascript
+order: 1000

@@ -1,0 +1,13 @@
+$kind: http-request
+description: Valida tipo no permitido. Espera 400 Bad Request.
+url: "{{baseUrl}}/api/bicicletas/disponibles?tipo=INVALIDO"
+method: GET
+queryParams:
+  tipo: INVALIDO
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('Status 400', () => pm.response.to.have.status(400));
+      pm.test('Respuesta JSON', () => pm.response.to.be.json); 
+    language: text/javascript
+order: 13000
