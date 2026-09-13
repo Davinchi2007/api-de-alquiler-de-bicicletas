@@ -9,7 +9,8 @@ body:
   content: |-
     {
       "codigo": "BIC-FLUJO-001",
-      "tipo": "MONTAÑA"
+      "tipo": "MONTAÑA",
+      "estado": "DISPONIBLE"
     }
 scripts:
   - type: afterResponse

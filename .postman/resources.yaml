@@ -2,9 +2,11 @@
 workspace:
   id: 969d479f-abb6-4060-9a5c-669dd1779b8b
 
+# Each entry here maps a local resource to one or more corresponding objects in Postman Cloud
+
 cloudResources:
   collections:
-    ../postman/collections/Alquiler Bicicletas API: 68c2dec5-80eb-4d98-99b2-c00b95599fa0
+    ../postman/collections/Alquiler Bicicletas API: c91789fa-9b39-4f8f-a527-acca031d93ae
 
 # All resources in the `postman/` folder are automatically registered in Local View.
 # Point to additional files outside the `postman/` folder to register them individually. Example:

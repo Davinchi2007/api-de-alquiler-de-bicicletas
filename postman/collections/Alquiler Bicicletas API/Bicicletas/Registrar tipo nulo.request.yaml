@@ -9,7 +9,8 @@ body:
   content: |-
     {
       "codigo": "BIC-004",
-      "tipo": null
+      "tipo": null,
+      "estado": "EN_MANTENIMIENTO"
     }
 scripts:
   - type: afterResponse

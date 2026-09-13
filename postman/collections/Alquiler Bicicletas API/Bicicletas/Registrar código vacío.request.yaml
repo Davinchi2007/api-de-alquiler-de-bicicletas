@@ -9,7 +9,8 @@ body:
   content: |-
     {
       "codigo": "",
-      "tipo": "URBANA"
+      "tipo": "URBANA",
+      "estado": "DISPONIBLE"
     }
 scripts:
   - type: afterResponse

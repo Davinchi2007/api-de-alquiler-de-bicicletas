@@ -9,7 +9,8 @@ body:
   content: |-
     {
       "codigo": "{{codigoBicicletaElectrica}}",
-      "tipo": "ELÉCTRICA"
+      "tipo": "ELÉCTRICA",
+      "estado": "DISPONIBLE"
     }
 scripts:
   - type: afterResponse
